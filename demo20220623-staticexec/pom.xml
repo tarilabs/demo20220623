@@ -1,0 +1,100 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.drools</groupId>
+        <artifactId>demo20220623-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>demo20220623-staticexec</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>demo20220623-rules</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-engine</artifactId>
+            <version>${version.drools}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${version.ch.qos.logback}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${version.org.assertj}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.build.directory}/generated-resources</directory>
+            </resource>
+        </resources>
+        <plugins>
+            <!-- this is not an ideal setup, but this allows a specific (1x) KJAR to be shaded in a specific JAR app 
+                ref https://docs.drools.org/7.71.0.Final/drools-docs/html_single/index.html#uberjar-friendly-kie-conf -->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>shade-kjar-in-staticexec</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources</outputDirectory>
+                            <includeArtifacIds>demo20220623-rules</includeArtifacIds>
+                            <includeGroupIds>org.drools</includeGroupIds>
+                            <excludeTransitive>true</excludeTransitive>
+                            <includes>META-INF/kie/org.drools/demo20220623-rules/drools-model</includes>
+                            <outputDirectory>${project.build.directory}/generated-resources/META-INF/kie/org.drools/${project.artifactId}</outputDirectory>
+                            <fileMappers>
+                                <org.codehaus.plexus.components.io.filemappers.FlattenFileMapper />
+                            </fileMappers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <!-- <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>org.kie.dmn.ruleset2dmn.cli.App</mainClass> if wanting to define a default Main to run, but not in this demo..
+                                </transformer> -->
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/kie.conf</resource> <!-- will not be necessary for 8.x, but needed for 7.x -->
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
