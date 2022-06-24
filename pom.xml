@@ -10,6 +10,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>8</maven.compiler.release>
         <version.drools>7.71.0.Final</version.drools>
+        <version.junit>5.8.2</version.junit>
         <version.ch.qos.logback>1.2.11</version.ch.qos.logback>
         <version.org.assertj>3.23.1</version.org.assertj>
     </properties>

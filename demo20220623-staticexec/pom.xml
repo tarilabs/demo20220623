@@ -8,10 +8,15 @@
     </parent>
     <artifactId>demo20220623-staticexec</artifactId>
 
+    <properties>
+        <kjar.artifactId>demo20220623-rules</kjar.artifactId>
+        <kjar.groupId>org.drools</kjar.groupId>
+    </properties>
+
     <dependencies>
         <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>demo20220623-rules</artifactId>
+            <groupId>${kjar.groupId}</groupId>
+            <artifactId>${kjar.artifactId}</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -27,7 +32,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.8.2</version>
+            <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -61,11 +66,11 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <outputDirectory>${project.build.directory}/generated-resources</outputDirectory>
-                            <includeArtifacIds>demo20220623-rules</includeArtifacIds>
-                            <includeGroupIds>org.drools</includeGroupIds>
+                            <includeArtifacIds>${kjar.artifactId}</includeArtifacIds>
+                            <includeGroupIds>${kjar.groupId}</includeGroupIds>
                             <excludeTransitive>true</excludeTransitive>
-                            <includes>META-INF/kie/org.drools/demo20220623-rules/drools-model</includes>
-                            <outputDirectory>${project.build.directory}/generated-resources/META-INF/kie/org.drools/${project.artifactId}</outputDirectory>
+                            <includes>META-INF/kie/${kjar.groupId}/${kjar.artifactId}/drools-model</includes>
+                            <outputDirectory>${project.build.directory}/generated-resources/META-INF/kie/${project.groupId}/${project.artifactId}</outputDirectory>
                             <fileMappers>
                                 <org.codehaus.plexus.components.io.filemappers.FlattenFileMapper />
                             </fileMappers>
